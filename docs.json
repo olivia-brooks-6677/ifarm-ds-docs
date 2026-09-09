@@ -39,6 +39,12 @@
         "pages": [
           "style-guide/typography"
         ]
+      },
+      {
+        "group": "components",
+        "pages": [
+          "components/search"
+        ]
       }
     ]
   },
