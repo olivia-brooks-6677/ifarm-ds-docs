@@ -87,5 +87,9 @@
   "appearance": {
     "default": "light",
     "strict": true
+  },
+  "fonts": {
+    "family": "Inter",
+    "weight": 400
   }
 }
