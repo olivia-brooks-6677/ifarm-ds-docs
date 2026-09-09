@@ -1,0 +1,153 @@
+---
+title: "Typography"
+sidebarTitle: "Typography"
+description: "Hệ chữ Inter cho giao diện iFarm, tổ chức theo hai lớp primitive và semantic để dễ mở rộng và đồng bộ."
+---
+
+Hệ chữ **Inter** được sử dụng xuyên suốt giao diện iFarm, tối ưu khả năng đọc trên mobile và hỗ trợ tốt cho nội dung tiếng Việt. Typography được tổ chức theo hai lớp: **primitive** (giá trị gốc) và **semantic** (token có ý nghĩa dùng trong UI).
+
+## Primitive
+
+Lớp giá trị gốc, không gắn với ngữ cảnh sử dụng. Các semantic token bên dưới đều tham chiếu tới đây.
+
+### Font family
+
+| Token | Giá trị |
+| --- | --- |
+| `sans` | Inter |
+
+### Font weight
+
+| Token | Giá trị |
+| --- | --- |
+| `regular` | 400 |
+| `medium` | 500 |
+| `semibold` | 600 |
+
+### Font size
+
+| Token | Giá trị |
+| --- | --- |
+| `11` | 11px |
+| `12` | 12px |
+| `13` | 13px |
+| `14` | 14px |
+| `16` | 16px |
+| `18` | 18px |
+| `22` | 22px |
+| `28` | 28px |
+| `32` | 32px |
+
+### Line height
+
+| Token | Giá trị |
+| --- | --- |
+| `16` | 16px |
+| `18` | 18px |
+| `20` | 20px |
+| `24` | 24px |
+| `28` | 28px |
+| `36` | 36px |
+| `40` | 40px |
+
+### Letter spacing
+
+| Token | Giá trị |
+| --- | --- |
+| `0` | 0 |
+| `tight` | −1 |
+| `tighter` | −2 |
+
+## Semantic
+
+Token dùng trực tiếp trong UI. Mỗi token map 1-1 tới các giá trị primitive ở trên.
+
+### Display
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `display.large` | sans | semibold (600) | 32 | 40 | tighter (−2) |
+
+**`display.large`**
+
+> Chăm vườn đúng lúc, nhẹ công mỗi ngày.
+
+### Heading
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `heading.large` | sans | semibold (600) | 28 | 36 | tighter (−2) |
+| `heading.medium` | sans | semibold (600) | 22 | 28 | tighter (−2) |
+| `heading.small` | sans | semibold (600) | 18 | 24 | tight (−1) |
+
+**`heading.large`**
+
+> Tổng quan sức khỏe vườn
+
+**`heading.medium`**
+
+> Khu sầu riêng cần chú ý
+
+**`heading.small`**
+
+> Công việc hôm nay
+
+### Title
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `title.medium` | sans | semibold (600) | 16 | 24 | tight (−1) |
+
+**`title.medium`**
+
+> Kiểm tra độ ẩm khu A
+
+### Body
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `body.large` | sans | regular (400) | 16 | 24 | 0 |
+| `body.medium` | sans | regular (400) | 14 | 20 | 0 |
+| `body.small` | sans | regular (400) | 13 | 18 | 0 |
+
+**`body.large`**
+
+> Khu A có ba cây xuất hiện dấu hiệu vàng lá non. Kiểm tra độ ẩm đất và ghi lại thay đổi sau khi tưới.
+
+**`body.medium`**
+
+> Theo dõi lượng nước tưới và tình trạng lá trong ba ngày tiếp theo để phát hiện thay đổi sớm.
+
+**`body.small`**
+
+> Dữ liệu được cập nhật từ cảm biến lúc 07:30 sáng nay.
+
+### Label
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `label.large` | sans | semibold (600) | 16 | 20 | 0 |
+| `label.medium` | sans | medium (500) | 14 | 16 | 0 |
+| `label.small` | sans | medium (500) | 12 | 16 | 0 |
+
+**`label.large`**
+
+> Hoàn thành công việc
+
+**`label.medium`**
+
+> Đang cần xử lý
+
+**`label.small`**
+
+> ĐỘ ẨM ĐẤT
+
+### Caption
+
+| Token | Font family | Weight | Size | Line height | Letter spacing |
+| --- | --- | --- | --- | --- | --- |
+| `caption` | sans | regular (400) | 11 | 16 | 0 |
+
+**`caption`**
+
+> Cập nhật 5 phút trước
