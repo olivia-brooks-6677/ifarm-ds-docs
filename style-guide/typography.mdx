@@ -4,6 +4,8 @@ sidebarTitle: "Typography"
 description: "Hệ chữ Inter cho giao diện iFarm, tổ chức theo hai lớp primitive và semantic để dễ mở rộng và đồng bộ."
 ---
 
+import typography from '../tokens/typography.json'
+
 Hệ chữ **Inter** được sử dụng xuyên suốt giao diện iFarm, tối ưu khả năng đọc trên mobile và hỗ trợ tốt cho nội dung tiếng Việt. Typography được tổ chức theo hai lớp: **primitive** (giá trị gốc) và **semantic** (token có ý nghĩa dùng trong UI).
 
 ## Primitive
@@ -28,6 +30,7 @@ Lớp giá trị gốc, không gắn với ngữ cảnh sử dụng. Các semant
 
 | Token | Giá trị |
 | --- | --- |
+| `10` | {typography.primitive.fontSize["10"]}px |
 | `11` | 11px |
 | `12` | 12px |
 | `13` | 13px |
