@@ -1,0 +1,240 @@
+---
+title: "Search"
+sidebarTitle: "Search"
+description: "Ô nhập từ khoá để tìm nội dung trong app hoặc trong phạm vi một màn hình."
+---
+
+Search là **ô nhập**, không phải cả trải nghiệm tìm kiếm. Recent, Suggestion, Result, No result và Filter thuộc **Search pattern**, được mô tả ở tài liệu riêng.
+
+Chuẩn tham chiếu: Apple Human Interface Guidelines (Search fields), Material Design 3 (Search), Flutter Material (`SearchBar`, `SearchAnchor`).
+
+## Purpose
+
+Search dùng để tìm nội dung bằng từ khóa, trong toàn app hoặc trong phạm vi màn hình hiện tại.
+
+### Khi nào dùng
+
+| Tình huống | Dùng gì |
+| --- | --- |
+| Người dùng cần **tìm** thứ họ đã biết tên | Search |
+| Người dùng cần **thu hẹp** một danh sách đang thấy | Filter (không phải Search) |
+| Người dùng cần **nhập** dữ liệu để lưu | Text field |
+
+Nguyên tắc phân biệt: Search trả về _nội dung mới_, Filter chỉ giấu bớt _nội dung đang có_. Nếu người nông dân gõ "sầu riêng" để xem cây sầu riêng ở mọi khu, đó là Search. Nếu họ đang đứng trong danh sách khu A và gõ để bớt dòng, đó là Filter.
+
+### Hai phạm vi
+
+Cả hai dùng chung component, chỉ khác scope:
+
+- **Global**: tìm khắp app. Đặt ở vị trí cố định, thường là ở đầu màn hình chính.
+- **Local**: tìm trong đúng màn hình đang mở. Apple khuyên đặt ngay sát khối nội dung mà nó tìm, để người dùng hiểu là chỉ tìm trong đó.
+
+## Anatomy
+
+```text
+Search
+├── Container
+├── Leading icon        → search icon (mặc định)
+├── Query / Placeholder
+├── Clear               → chỉ khi có query
+├── Trailing slot       → tuỳ chọn (voice, filter)
+└── Dismiss             → chỉ ở trạng thái active
+```
+
+| Phần | Bắt buộc | Mô tả |
+| --- | --- | --- |
+| **Container** | Có | Nền và vùng chạm của toàn bộ ô |
+| **Leading icon** | Có | Kính lúp. Apple nhấn mạnh phải dùng đúng icon quy ước này, không sáng tạo lại; người dùng nhận ra nó mà không cần đọc |
+| **Query / Placeholder** | Có | Vùng nhập. Khi rỗng hiện placeholder mô tả phạm vi tìm |
+| **Clear** | Có điều kiện | Xóa query, **ở lại** trong search. Chỉ hiện khi có nội dung |
+| **Trailing slot** | Không | Chỗ cắm thêm hành động: nhập giọng nói, mở bộ lọc |
+| **Dismiss** | Có điều kiện | Thoát khỏi search, quay về màn hình trước. Chỉ có khi search đang active |
+
+### Điểm cần quyết định: Clear và Dismiss là hai thứ khác nhau
+
+Đây là chỗ hay bị nhầm nhất, và spec hiện tại chưa tách:
+
+- **Clear**: xóa chữ, bàn phím vẫn mở, vẫn đang tìm. 
+- **Dismiss**: thoát hẳn, bàn phím đóng, về màn hình cũ. Như đi ra khỏi phòng.
+
+### Điểm cần quyết định: Dismiss đặt ở đâu
+
+Hai nền tảng làm khác nhau:
+
+|  | Vị trí | Hình thức |
+| --- | --- | --- |
+| **iOS** | Bên **ngoài** ô, phía phải | Nút chữ "Cancel" |
+| **Android** | Bên **trong** ô, thay chỗ leading icon | Mũi tên back |
+
+Flutter không tự xử lý giúp. iFarm phải chọn **một** kiểu và dùng nhất quán.
+
+## Behavior
+
+### Vòng đời
+
+```text
+Resting → (chạm) → Active/Focused → (gõ) → Filled
+                        ↑                      │
+                        └──── Clear ───────────┘
+                        │
+                        └──── Dismiss ────→ về màn hình trước
+```
+
+### Quy tắc hành vi
+
+**Tìm ngay khi gõ.** Apple khuyên nên bắt đầu tìm ngay lúc người dùng nhập, không đợi bấm nút. Kết quả cập nhật dần theo từng ký tự.
+
+**Phím Enter là submit.** Material 3 quy định bấm Return thì gửi truy vấn. Bàn phím phải hiện phím "Tìm" thay vì "Xuống dòng".
+
+**Vùng dưới ô không được bỏ trống.** Ngay khi active mà chưa gõ gì, Apple khuyên hiển thị lối tắt (lịch sử tìm, mục hay dùng) để người dùng tới đích mà không cần gõ. _(Nội dung này thuộc Search pattern, nhưng component phải chừa chỗ cho nó.)_
+
+**Vị trí phải ổn định.** Search luôn ở đầu màn hình. Nếu ẩn khi cuộn thì phải hiện lại khi kéo xuống, không bao giờ biến mất hẳn.
+
+### Cần iFarm tự quyết
+
+| Câu hỏi | Vì sao không có sẵn đáp án |
+| --- | --- |
+| Chờ bao lâu mới gọi tìm kiếm sau mỗi ký tự? | Không có nguồn nào quy định. Tuỳ tốc độ mạng ngoài vườn |
+| Tối thiểu mấy ký tự mới tìm? | Tuỳ dữ liệu iFarm |
+| Query có giữ lại khi rời màn hình rồi quay lại không? | Tuỳ luồng sản phẩm |
+
+## States
+
+| State | Bàn phím | Clear | Mô tả |
+| --- | --- | --- | --- |
+| **Resting** | Đóng | Ẩn | Chưa chạm. Hiện placeholder |
+| **Focused** | Mở | Ẩn | Đã chạm, con trỏ nhấp nháy, chưa gõ |
+| **Filled** | Mở | Hiện | Đang có query |
+| **Filled, unfocused** | Đóng | Hiện | Có query nhưng đã rời khỏi ô |
+| **Loading** | Mở | Hiện | Đang chờ kết quả |
+| **Disabled** |  | Ẩn | Không chạm được. Ví dụ: chưa chọn khu vườn nên chưa tìm được |
+| **Read-only** | Không mở | Ẩn | Chạm vào thì mở màn hình search riêng, không gõ tại chỗ |
+
+### Lưu ý về Loading
+
+Cả Apple HIG lẫn Material 3 **đều không định nghĩa** trạng thái loading trên bản thân ô search; họ đặt tín hiệu chờ ở vùng kết quả. Flutter cũng không có thuộc tính `loading`.
+
+Nghĩa là iFarm phải tự quyết một trong hai:
+
+- **A**: Loading nằm ở vùng kết quả (đúng chuẩn cả 3 nguồn). Component Search không cần state này.
+- **~~B~~**~~: Loading nằm trong ô, thay chỗ icon Clear bằng vòng xoay. Lệch chuẩn nhưng rõ hơn khi mạng chậm, đáng cân nhắc cho bối cảnh ngoài đồng.~~
+
+### Lưu ý về Read-only
+
+Đây là kiểu rất phổ biến trên mobile mà spec hiện tại đang thiếu: ô search ở trang chủ trông y hệt ô thật, nhưng chạm vào thì nhảy sang màn hình search chuyên dụng. Flutter hỗ trợ sẵn qua `readOnly`.
+
+## Accessibility
+
+### Vùng chạm
+
+Icon nhìn nhỏ nhưng vùng chạm phải lớn. Tối thiểu **44×44 pt** trên iOS, **48×48 dp** trên Android. Áp dụng riêng cho từng phần chạm được: nút Clear phải đủ lớn.
+
+### Trình đọc màn hình
+
+Material 3 cho Android yêu cầu đặt content description cho search bar để TalkBack đọc được mục đích của nó. Chữ bên trong ô được hệ thống tự chuyển cho trình đọc, nên thường không cần gắn nhãn thêm cho phần text.
+
+Ba thứ **phải** có nhãn riêng:
+
+- Ô search: "Ô tìm kiếm"
+- Nút Clear: "Xóa nội dung tìm kiếm"
+- Nút Dismiss: "Thoát tìm kiếm"
+
+### Placeholder không thay được nhãn
+
+Placeholder biến mất ngay khi người dùng gõ chữ đầu tiên. Ai dùng trình đọc màn hình sẽ mất hoàn toàn thông tin đó. Ô search cần một nhãn thật ở tầng dữ liệu, kể cả khi mắt thường không thấy nó.
+
+### Cỡ chữ hệ thống
+
+Người lớn tuổi thường bật cỡ chữ lớn. Ô search phải **cao lên theo chữ**, không được cắt chữ hay khóa chiều cao cứng. Với iFarm (app cho nông dân), đây không phải trường hợp hiếm mà là trường hợp thường gặp.
+
+### Thông báo kết quả
+
+Khi số kết quả đổi, phải phát ra thông báo cho trình đọc màn hình ("12 kết quả"). Người không nhìn thấy màn hình không có cách nào để biết danh sách bên dưới đã thay đổi.
+
+### Tương phản
+
+Placeholder thường bị làm quá mờ cho "đẹp". Nó vẫn là chữ mang thông tin, vẫn phải đạt ngưỡng tương phản, đặc biệt khi dùng ngoài nắng.
+
+## Rules
+
+### Nên
+
+- Placeholder mô tả rõ phạm vi tìm: "Tìm khu, việc, quan sát…"
+- Clear chỉ hiện khi đã có nội dung
+- Search toàn app và search trong một màn hình dùng **cùng component**, chỉ khác scope
+- Tái sử dụng `Field/Search` có sẵn; không tạo component hay token mới
+- Giữ search ở vị trí cố định trên mọi màn hình
+
+### Không nên
+
+- **Đừng để placeholder chỉ là "Tìm kiếm".** Apple nói thẳng: từ đó không cho người dùng thông tin gì. Phải nói tìm được _cái gì_
+- **Đừng vội thêm scope bar.** Apple khuyên ưu tiên cải thiện chất lượng kết quả trước; chia nhóm chỉ là cách chữa cháy khi kết quả chưa đủ tốt
+- **Đừng dùng text field thường làm search.** Trông giống nhau nhưng mất hết hành vi hệ thống: phím Enter, nút Clear, hoạt ảnh mở
+- **Đừng gộp Clear với Dismiss** thành một nút
+- **Đừng giấu search sau menu** nếu tìm kiếm là việc chính của màn hình
+
+## Component API
+
+### Props
+
+| Prop | Kiểu | Mặc định | Mô tả |
+| --- | --- | --- | --- |
+| `value` | string | `""` | Nội dung query hiện tại |
+| `placeholder` | string |  | Chữ gợi ý khi rỗng |
+| `leading` | node | search icon | Icon đầu ô |
+| `trailing` | node[] |  | Hành động phụ: voice, filter |
+| `disabled` | bool | `false` | Không tương tác được |
+| `readOnly` | bool | `false` | Chạm mở màn hình khác, không gõ tại chỗ |
+| `loading` | bool | `false` | Đang chờ kết quả |
+| `autoFocus` | bool | `false` | Tự mở bàn phím khi vào màn hình |
+| `onChange` | fn(string) |  | Mỗi lần nội dung đổi |
+| `onSubmit` | fn(string) |  | Bấm phím Tìm trên bàn phím |
+| `onClear` | fn() |  | Bấm nút Clear |
+| `onDismiss` | fn() |  | Thoát khỏi search |
+
+### Variants
+
+| Variant | Khi nào dùng |
+| --- | --- |
+| **Persistent** | Search là việc chính của màn hình. Ô hiện sẵn, chiếm cả chiều ngang |
+| **Inline** | Search phụ cho một khối nội dung. Đặt sát khối đó |
+| **Entry** | Chỉ là cửa vào. Dùng chung với `readOnly`, chạm thì mở màn hình search |
+
+### Đối chiếu với Flutter
+
+Bảng này để dev biết chỗ nào dùng được ngay, chỗ nào phải tự dựng.
+
+| Prop trong spec | Flutter | Ghi chú |
+| --- | --- | --- |
+| `value` | `controller` | Flutter không có prop `value`. Nội dung nằm trong `TextEditingController` |
+| `placeholder` | `hintText` |  |
+| `leading` | `leading` |  |
+| `trailing` | `trailing` | Nhận danh sách widget |
+| `disabled` | `enabled` | **Ngược dấu**: `disabled: true` tương ứng `enabled: false` |
+| `readOnly` | `readOnly` |  |
+| `loading` | ⚠️ **không có** | Phải tự dựng, thường nhét vào `trailing` |
+| `autoFocus` | `autoFocus` |  |
+| `onChange` | `onChanged` |  |
+| `onSubmit` | `onSubmitted` | Cần đặt `textInputAction` để phím Enter hiện chữ "Tìm" |
+| `onClear` | ⚠️ **không có** | Phải tự dựng: `IconButton` trong `trailing` + `controller.clear()` |
+| `onDismiss` | ⚠️ **không có** | Phải tự dựng |
+
+**Ba prop cuối là công việc thật sự phải làm**, không phải cắm vào là chạy. Nếu iFarm dùng `SearchAnchor` (kiểu mở toàn màn hình), lưu ý thêm: ô ngoài và ô trong màn hình mở rộng là **hai bề mặt riêng**, mỗi bên cần gắn callback riêng; Flutter tách thành `onChanged` và `viewOnChanged`.
+
+### States mapping
+
+| State | Điều kiện |
+| --- | --- |
+| Resting | `!focused && !value` |
+| Focused | `focused && !value` |
+| Filled | `focused && value` |
+| Filled, unfocused | `!focused && value` |
+| Loading | `loading` |
+| Disabled | `disabled` |
+| Read-only | `readOnly` |
+
+## Nguồn
+
+- Apple Human Interface Guidelines: Search fields
+- Material Design 3: Search
+- Flutter Material: `SearchBar`, `SearchAnchor`
