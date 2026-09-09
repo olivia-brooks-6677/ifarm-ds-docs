@@ -3,11 +3,14 @@
   "theme": "mint",
   "name": "iFarm Docs",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#194B3F",
+    "light": "#A3D196",
+    "dark": "#064032"
   },
-  "favicon": "/favicon.svg",
+  "favicon": {
+    "light": "/images/image121.svg",
+    "dark": "/images/image121.svg"
+  },
   "navigation": {
     "global": {
       "anchors": [
@@ -40,8 +43,8 @@
     ]
   },
   "logo": {
-    "light": "/logo/light.svg",
-    "dark": "/logo/dark.svg"
+    "light": "/images/image121.svg",
+    "dark": "/images/image121.svg"
   },
   "navbar": {
     "links": [
@@ -74,5 +77,15 @@
       "github": "https://github.com/mintlify",
       "linkedin": "https://linkedin.com/company/mintlify"
     }
+  },
+  "background": {
+    "color": {
+      "light": "#FAFAF7",
+      "dark": "#1C1A17"
+    }
+  },
+  "appearance": {
+    "default": "light",
+    "strict": true
   }
 }
